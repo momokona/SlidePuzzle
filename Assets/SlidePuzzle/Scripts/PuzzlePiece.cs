@@ -5,17 +5,17 @@ public class PuzzlePiece : MonoBehaviour
 {
     // スプライトを描画するためのコンポーネント
     [SerializeField] SpriteRenderer sprite_renderer_;    // SerializeFieldをつけておくことでUnityがロード時にsprite_rendrer_ にポインタを入れてくれる
-    int cell_id_;   // セルID
+    int id_;   // ID
 
     public int GetCellId()
     {
-        return cell_id_;
+        return id_;
     }
 
-    // 外部から呼ばれてスプライトとセルIDをセット(スプライトはセルごとに異なるので、セットしてもらう必要がある)
-    public void Initialize(int cell_id, Sprite sprite)
+    // 外部から呼ばれてスプライトとIDをセット(スプライトはセルごとに異なるので、セットしてもらう必要がある)
+    public void Initialize(int id, Sprite sprite)
     {
-        cell_id_ = cell_id;
+        id_ = id;
         sprite_renderer_.sprite = sprite;
     }
 
