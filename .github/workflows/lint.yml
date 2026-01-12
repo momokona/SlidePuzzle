@@ -1,0 +1,19 @@
+name: "Code Check"
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # C# のコードスタイル（インデント、命名規則、不要なusingなど）を自動チェック
+      - name: Run dotnet format (Check Only)
+        run: dotnet format --verify-no-changes --verbosity diagnostic
