@@ -4,10 +4,10 @@ using UnityEngine;
 public class PuzzlePiece : MonoBehaviour
 {
     // スプライトを描画するためのコンポーネント
-    [SerializeField] SpriteRenderer sprite_renderer_;    // SerializeFieldをつけておくことでUnityがロード時にsprite_rendrer_ にポインタを入れてくれる
+    [SerializeField] SpriteRenderer _spriteRenderer;    // SerializeFieldをつけておくことでUnityがロード時にsprite_rendrer_ にポインタを入れてくれる
     int id_;   // ID
 
-    public int GetCellId()
+    public int GetId()
     {
         return id_;
     }
@@ -16,7 +16,7 @@ public class PuzzlePiece : MonoBehaviour
     public void Initialize(int id, Sprite sprite)
     {
         id_ = id;
-        sprite_renderer_.sprite = sprite;
+        _spriteRenderer.sprite = sprite;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -29,5 +29,10 @@ public class PuzzlePiece : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public bool IsEmptyPiece()
+    {
+        return id_ == 0;
     }
 }
