@@ -65,25 +65,15 @@ public class PieceManager : MonoBehaviour
             return;
         }
 
-        // セルの大きさを取得(スプライトの大きさが見た目のセルの大きさになるのでスプライトから取得)
-        Vector2 originalSize = _pieceImages[0].bounds.size; // bounds:AABBのサイズを取得
-        Vector2 scale = _piecePrefab.transform.localScale; // 設定されたスケールを取得
-        Vector2 oneCellSize = originalSize * scale + new Vector2(_padding, _padding);
-
+        Vector2 oneCellSize = GetOneCellSize();
         // 盤面が画面中央になるように、左上のセルの位置を決定
-        // 端のピースの中心から反対側の端のピースの中心までの距離を計算し、その半分が中心からのオフセットになる(Y座標は行番号と逆になる)
-        Vector2 top_left = new Vector2(-(_width - 1) / 2.0f * oneCellSize.x, (_height - 1) / 2.0f * oneCellSize.y);
+        Vector2 topLeft = GetTopLeftPos(oneCellSize);
         _pieces = new PuzzlePiece[totalCellNum];   /// 空白の部分も含めて配列を確保
         for (int i = 0; i < totalCellNum; ++i)
         {
             // プレハブの内容をすべてコピーして新しいインスタンスを生成。(第二引数にtransformを渡しているため、親をManagerに設定)
             _pieces[i] = Instantiate(_piecePrefab, transform);
-
-            int col = i % _width; // 列番号
-            int row = i / _width; // 行番号
-
-            Vector2 pos = new Vector2(top_left.x + col * oneCellSize.x, top_left.y - row * oneCellSize.y);  // y座標は行が大きいほど下になる
-            _pieces[i].transform.localPosition = pos; // ローカル座標系で位置を設定
+            SetCellPos(oneCellSize, topLeft, i);
             // 空白(0番目)のときは画像nullを渡す
             Sprite img;
             if (i == Defs.EMPTY_ID)
@@ -100,6 +90,31 @@ public class PieceManager : MonoBehaviour
             }
             _pieces[i].Initialize(i, img);
         }
+    }
+
+    Vector2 GetOneCellSize()
+    {
+        // セルの大きさを取得(スプライトの大きさが見た目のセルの大きさになるのでスプライトから取得)
+        Vector2 originalSize = _pieceImages[0].bounds.size; // bounds:AABBのサイズを取得
+        Vector2 scale = _piecePrefab.transform.localScale; // 設定されたスケールを取得
+        Vector2 oneCellSize = originalSize * scale + new Vector2(_padding, _padding);
+        return oneCellSize;
+    }
+
+    Vector2 GetTopLeftPos(Vector2 oneCellSize)
+    {
+        // 端のピースの中心から反対側の端のピースの中心までの距離を計算し、その半分が中心からのオフセットになる(Y座標は行番号と逆になる)
+        return new Vector2(-(_width - 1) / 2.0f * oneCellSize.x, (_height - 1) / 2.0f * oneCellSize.y);
+    }
+
+    // 配列のインデックスに合わせて位置をセット
+    void SetCellPos(Vector2 oneCellSize, Vector2 top_left, int i)
+    {
+        int col = i % _width; // 列番号
+        int row = i / _width; // 行番号
+
+        Vector2 pos = new Vector2(top_left.x + col * oneCellSize.x, top_left.y - row * oneCellSize.y);  // y座標は行が大きいほど下になる
+        _pieces[i].transform.localPosition = pos; // ローカル座標系で位置を設定
     }
 
     // Update is called once per frame
@@ -164,6 +179,13 @@ public class PieceManager : MonoBehaviour
         PuzzlePiece temp_piece = _pieces[_selectArrayIndex];
         _pieces[_selectArrayIndex] = _pieces[nextIndex];
         _pieces[nextIndex] = temp_piece;
+        // 位置もセット
+        Vector2 oneCellSize = GetOneCellSize();
+        // 盤面が画面中央になるように、左上のセルの位置を決定
+        Vector2 topLeft = GetTopLeftPos(oneCellSize);
+        SetCellPos(oneCellSize, topLeft, _selectArrayIndex);
+        SetCellPos(oneCellSize, topLeft, nextIndex);
+
         _selectArrayIndex = Defs.INVALID_ID; // 選択解除
         return;
     }
