@@ -161,9 +161,9 @@ public class PieceManager : MonoBehaviour
 
         List<int> surroundAreaList = GetSurroundAreaList(_selectArrayIndex);
         bool canMove = false;
-        foreach (var surround_index in surroundAreaList)
+        foreach (var surroundIndex in surroundAreaList)
         {
-            if (surround_index == nextIndex)
+            if (surroundIndex == nextIndex)
             {
                 canMove = true;
                 break; ;
@@ -176,9 +176,9 @@ public class PieceManager : MonoBehaviour
             return;
         }
         // 選択されていたピースと離された場所のピースを入れ替え
-        PuzzlePiece temp_piece = _pieces[_selectArrayIndex];
+        PuzzlePiece tempPiece = _pieces[_selectArrayIndex];
         _pieces[_selectArrayIndex] = _pieces[nextIndex];
-        _pieces[nextIndex] = temp_piece;
+        _pieces[nextIndex] = tempPiece;
         // 位置もセット
         Vector2 oneCellSize = GetOneCellSize();
         // 盤面が画面中央になるように、左上のセルの位置を決定
@@ -200,7 +200,7 @@ public class PieceManager : MonoBehaviour
             return;
         }
         int arrayIndex = GetArrayIndexFromPos(hitPos.row, hitPos.col);
-        if(arrayIndex == Defs.INVALID_ID || arrayIndex == Defs.EMPTY_ID)
+        if(arrayIndex == Defs.INVALID_ID || _pieces[arrayIndex].GetId() == Defs.EMPTY_ID)
         {
             // 無効なインデックス、または空白のピースが選択された場合は終了
             return;
