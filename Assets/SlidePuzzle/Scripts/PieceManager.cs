@@ -64,6 +64,7 @@ public class PieceManager : MonoBehaviour
             Debug.Assert(false, "[u8]スプライトの数とパズルの数が合いません\n");
             return;
         }
+        
 
         Vector2 oneCellSize = GetOneCellSize();
         // 盤面が画面中央になるように、左上のセルの位置を決定
@@ -90,6 +91,17 @@ public class PieceManager : MonoBehaviour
             }
             _pieces[i].Initialize(i, img);
         }
+
+        do
+        {
+            // ピースをシャッフル
+            for (int i = 1; i < totalCellNum; ++i)
+            {
+                // ピースをランダムに入れ替え
+                int swapIndex = Random.Range(i, totalCellNum);
+                SwapPiece(i, swapIndex);
+            }
+        } while (!PuzzleSolver.IsSolvablePuzzle(_pieces));
     }
 
     Vector2 GetOneCellSize()
@@ -134,13 +146,14 @@ public class PieceManager : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             // マウスの左クリックが離されたとき
-            SwapPiece();
+            SwapPieceInGame();
         }
     }
 
-    void SwapPiece()
+    // ゲーム中でピースを入れ替える
+    void SwapPieceInGame()
     {
-        if(_selectArrayIndex == Defs.INVALID_ID)
+        if (_selectArrayIndex == Defs.INVALID_ID)
         {
             return; // 有効なものを選択していなかった場合はreturn
         }
@@ -169,25 +182,28 @@ public class PieceManager : MonoBehaviour
                 break; ;
             }
         }
-        if(!canMove)
+        if (!canMove)
         {
             // 離された場所が動けるマスでなかったら終了
             _selectArrayIndex = Defs.INVALID_ID;
             return;
         }
         // 選択されていたピースと離された場所のピースを入れ替え
-        PuzzlePiece tempPiece = _pieces[_selectArrayIndex];
-        _pieces[_selectArrayIndex] = _pieces[nextIndex];
-        _pieces[nextIndex] = tempPiece;
+        SwapPiece(_selectArrayIndex, nextIndex);
+
+        _selectArrayIndex = Defs.INVALID_ID; // 選択解除
+        return;
+    }
+
+    void SwapPiece(int index1, int index2)
+    {
+        (_pieces[index1], _pieces[index2]) = (_pieces[index2], _pieces[index1]);
         // 位置もセット
         Vector2 oneCellSize = GetOneCellSize();
         // 盤面が画面中央になるように、左上のセルの位置を決定
         Vector2 topLeft = GetTopLeftPos(oneCellSize);
-        SetCellPos(oneCellSize, topLeft, _selectArrayIndex);
-        SetCellPos(oneCellSize, topLeft, nextIndex);
-
-        _selectArrayIndex = Defs.INVALID_ID; // 選択解除
-        return;
+        SetCellPos(oneCellSize, topLeft, index1);
+        SetCellPos(oneCellSize, topLeft, index2);
     }
 
     // 動かすぴーすが決定されたときの処理
