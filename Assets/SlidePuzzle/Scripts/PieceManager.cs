@@ -56,7 +56,7 @@ public class PieceManager : MonoBehaviour
     void Start()
     {
         // 盤面の初期生成と配置
-        int totalCellNum = _width * _height;
+        int totalCellNum = GetTotalCellNum();
 
         // 画像の枚数が合っているかチェック。
         if (_pieceImages.Length != totalCellNum - 1)
@@ -64,7 +64,7 @@ public class PieceManager : MonoBehaviour
             Debug.Assert(false, "[u8]スプライトの数とパズルの数が合いません\n");
             return;
         }
-        
+
 
         Vector2 oneCellSize = GetOneCellSize();
         // 盤面が画面中央になるように、左上のセルの位置を決定
@@ -92,16 +92,21 @@ public class PieceManager : MonoBehaviour
             _pieces[i].Initialize(i, img);
         }
 
-        do
-        {
-            // ピースをシャッフル
-            for (int i = 1; i < totalCellNum; ++i)
-            {
-                // ピースをランダムに入れ替え
-                int swapIndex = Random.Range(i, totalCellNum);
-                SwapPiece(i, swapIndex);
-            }
-        } while (!PuzzleSolver.IsSolvablePuzzle(_pieces));
+        //do
+        //{
+        //    // ピースをシャッフル
+        //    for (int i = 1; i < totalCellNum; ++i)
+        //    {
+        //        // ピースをランダムに入れ替え
+        //        int swapIndex = Random.Range(i, totalCellNum);
+        //        SwapPiece(i, swapIndex);
+        //    }
+        //} while (!PuzzleSolver.IsSolvablePuzzle(_pieces));
+    }
+
+    private int GetTotalCellNum()
+    {
+        return _width * _height;
     }
 
     Vector2 GetOneCellSize()
@@ -192,6 +197,11 @@ public class PieceManager : MonoBehaviour
         SwapPiece(_selectArrayIndex, nextIndex);
 
         _selectArrayIndex = Defs.INVALID_ID; // 選択解除
+        if(IsClear())
+        {
+            // TODO：次のステップへ進む処理をここに書く
+            Debug.Log("Clear!");
+        }
         return;
     }
 
@@ -297,5 +307,21 @@ public class PieceManager : MonoBehaviour
             ++arrayIndex;
         }
         return pos;
+    }
+
+    // パズルが完成しているかチェック
+    private bool IsClear()
+    {
+        int right_index = 0;    // 正しいindex
+        int totalCellNum = GetTotalCellNum();
+        for (int cellIndex = 0; cellIndex < totalCellNum; ++cellIndex)
+        {
+            if (_pieces[cellIndex].GetId() != right_index)
+            {
+                return false;
+            }
+            ++right_index;
+        }
+            return true;
     }
 }
