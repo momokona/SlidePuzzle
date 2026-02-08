@@ -71,4 +71,16 @@ public static class PuzzleSolver
         // 転倒数＋空白の行番号(下から数えたもの)が偶数なら解ける
         return (invNum + GetEmptyRowFromBottomForEven(pieces)) % 2 == 0;
     }
+
+    // ヘルパー関数：マウスのスクリーン座標をワールド座標へ
+    public static Vector3 GetMouseWorldPos()
+    {
+        // Input.mousePositionはスクリーン座標(zは無視される)
+        Vector3 screenPos = Input.mousePosition;
+
+        // カメラのZ位置を考慮して変換（2DなのでZ=0平面と仮定したいが、カメラからの距離が必要）
+        screenPos.z = -Camera.main.transform.position.z;
+
+        return Camera.main.ScreenToWorldPoint(screenPos);
+    }
 }

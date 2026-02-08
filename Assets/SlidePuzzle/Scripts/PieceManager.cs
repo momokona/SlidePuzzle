@@ -1,6 +1,7 @@
-using Unity.InferenceEngine.Tokenization.PostProcessors.Templating;
-using System.Collections.Generic; //Listを使うために必要
 using SlidePuzzle.Common;
+using System.Collections.Generic; //Listを使うために必要
+using Unity.InferenceEngine.Tokenization.PostProcessors.Templating;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -92,16 +93,16 @@ public class PieceManager : MonoBehaviour
             _pieces[i].Initialize(i, img);
         }
 
-        //do
-        //{
-        //    // ピースをシャッフル
-        //    for (int i = 1; i < totalCellNum; ++i)
-        //    {
-        //        // ピースをランダムに入れ替え
-        //        int swapIndex = Random.Range(i, totalCellNum);
-        //        SwapPiece(i, swapIndex);
-        //    }
-        //} while (!PuzzleSolver.IsSolvablePuzzle(_pieces));
+        do
+        {
+            // ピースをシャッフル
+            for (int i = 1; i < totalCellNum; ++i)
+            {
+                // ピースをランダムに入れ替え
+                int swapIndex = Random.Range(i, totalCellNum);
+                SwapPiece(i, swapIndex);
+            }
+        } while (!PuzzleSolver.IsSolvablePuzzle(_pieces));
     }
 
     private int GetTotalCellNum()
@@ -162,47 +163,73 @@ public class PieceManager : MonoBehaviour
         {
             return; // 有効なものを選択していなかった場合はreturn
         }
-        piece.Pos nextPos = GetHitPiecePos();
-        if (!nextPos.IsValid())
-        {
-            // 何も選択されていなかったら終了
-            _selectArrayIndex = Defs.INVALID_ID;
-            return;
-        }
-        int nextIndex = GetArrayIndexFromPos(nextPos.row, nextPos.col);
-        if (_pieces[nextIndex].GetId() != Defs.EMPTY_ID)
-        {
-            // 離された場所が空白でなかったら終了
-            _selectArrayIndex = Defs.INVALID_ID;
-            return;
-        }
+        _pieces[_selectArrayIndex].EndDragging();   // ドラッグ終了を伝える
+
+        //piece.Pos nextPos = GetHitPiecePos();
+        //if (!nextPos.IsValid())
+        //{
+        //    // 何も選択されていなかったら終了
+        //    ResetSelect();
+        //    return;
+        //}
+        //int nextIndex = GetArrayIndexFromPos(nextPos.row, nextPos.col);
+        //if (_pieces[nextIndex].GetId() != Defs.EMPTY_ID)
+        //{
+        //    // 離された場所が空白でなかったら終了
+        //    ResetSelect();
+        //    return;
+        //}
 
         List<int> surroundAreaList = GetSurroundAreaList(_selectArrayIndex);
-        bool canMove = false;
+        int emptyIndex = Defs.INVALID_ID;
         foreach (var surroundIndex in surroundAreaList)
         {
-            if (surroundIndex == nextIndex)
+            if (_pieces[surroundIndex].GetId() == Defs.EMPTY_ID)
             {
-                canMove = true;
-                break; ;
+                emptyIndex = surroundIndex;
+                break;
             }
         }
-        if (!canMove)
+
+        Vector2 oneCellSize = GetOneCellSize();
+        Vector2 topLeft = GetTopLeftPos(oneCellSize);
+
+        if (emptyIndex == Defs.INVALID_ID)
         {
-            // 離された場所が動けるマスでなかったら終了
-            _selectArrayIndex = Defs.INVALID_ID;
+            Debug.Assert(false, "[u8]空白マスが近くにありません\n");
+            ResetSelect(oneCellSize, topLeft);
             return;
         }
+
+        // マウス位置と「空白マスの中心座標」との距離を測る
+        Vector2 emptyCellPos = GetWorldPosFromIndex(emptyIndex, oneCellSize, topLeft);  // 空白マスのワールド座標
+        Vector2 mousePos = PuzzleSolver.GetMouseWorldPos(); // マウスのワールド座標
+        // 距離が「セルの半分」より近ければドロップ成功とみなす
+        float distance = Vector2.Distance(mousePos, emptyCellPos);
+        float threshold = oneCellSize.x * 0.5f; // 半分の距離まで近づけば吸着
+        if (distance > threshold)
+        {
+            // 空白マスで離されていない
+            ResetSelect(oneCellSize, topLeft);
+            return;
+        }
+
         // 選択されていたピースと離された場所のピースを入れ替え
-        SwapPiece(_selectArrayIndex, nextIndex);
+        SwapPiece(_selectArrayIndex, emptyIndex);
 
         _selectArrayIndex = Defs.INVALID_ID; // 選択解除
-        if(IsClear())
+        if (IsClear())
         {
             // TODO：次のステップへ進む処理をここに書く
             Debug.Log("Clear!");
         }
         return;
+    }
+
+    private void ResetSelect(Vector2 oneCellSize, Vector2 topLeft)
+    {
+        SetCellPos(oneCellSize, topLeft, _selectArrayIndex);    // 元の位置に戻す
+        _selectArrayIndex = Defs.INVALID_ID;
     }
 
     void SwapPiece(int index1, int index2)
@@ -240,14 +267,22 @@ public class PieceManager : MonoBehaviour
             {
                 // 動けるマスが見つかった場合、選択されたピースの配列中のINDEXを保存して終了
                 _selectArrayIndex = arrayIndex;
-                // TODO:選択されたピースがマウスに追従するような処理を入れる
+                _pieces[_selectArrayIndex].StartDragging(); // ドラッグされたことを伝える
                 return;
             }
         }
         // 動けるマスがなかった場合は終了
         return;
     }
-    
+
+    // インデックスからワールド座標を算出するヘルパー関数
+    // (SetCellPosのロジックを計算用に切り出し)
+    Vector2 GetWorldPosFromIndex(int index, Vector2 oneCellSize, Vector2 topLeft)
+    {
+        int col = index % _width;
+        int row = index / _width;
+        return new Vector2(topLeft.x + col * oneCellSize.x, topLeft.y - row * oneCellSize.y);
+    }
 
     private List<int> GetSurroundAreaList(int arrayIndex)
     {
@@ -283,7 +318,7 @@ public class PieceManager : MonoBehaviour
         piece.Pos pos = new piece.Pos(Defs.INVALID_ID, Defs.INVALID_ID);
 
         // 画面上のマウスの位置を、ゲーム世界のワールド座標に変換
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos = PuzzleSolver.GetMouseWorldPos();
         // その位置にぴーむを飛ばしてコライダーにあたるか調べる
         // Physics2D.Raycast の引数は、通常 (発射地点, 発射方向)だが、Vector2.zero を指定すると、発射地点にいるオブジェクトを調べることができる
         // RaycastHit2Dは衝突結果を格納した構造体
