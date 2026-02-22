@@ -59,6 +59,7 @@ public class PuzzlePiece : MonoBehaviour
         _isDragging = false;
         // •`‰æ‡‚ğŒ³‚É–ß‚·
         _spriteRenderer.sortingOrder = 0;
+        GetComponent<AudioSource>().Play();
     }
 
     public bool IsEmptyPiece()
