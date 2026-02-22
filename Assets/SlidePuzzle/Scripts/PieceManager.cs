@@ -2,6 +2,7 @@ using SlidePuzzle.Common;
 using System.Collections.Generic; //Listを使うために必要
 using Unity.InferenceEngine.Tokenization.PostProcessors.Templating;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement; // SceneManagerを使うために必要
 using UnityEngine;
 
 
@@ -92,10 +93,11 @@ public class PieceManager : MonoBehaviour
             }
             _pieces[i].Initialize(i, img);
         }
-
+        // クリア確認用
+        // SwapPiece(0, 1);
         do
         {
-            // ピースをシャッフル
+            // ピースをシャッフル(0番目、左上は入れ替えない)
             for (int i = 1; i < totalCellNum; ++i)
             {
                 // ピースをランダムに入れ替え
@@ -165,21 +167,6 @@ public class PieceManager : MonoBehaviour
         }
         _pieces[_selectArrayIndex].EndDragging();   // ドラッグ終了を伝える
 
-        //piece.Pos nextPos = GetHitPiecePos();
-        //if (!nextPos.IsValid())
-        //{
-        //    // 何も選択されていなかったら終了
-        //    ResetSelect();
-        //    return;
-        //}
-        //int nextIndex = GetArrayIndexFromPos(nextPos.row, nextPos.col);
-        //if (_pieces[nextIndex].GetId() != Defs.EMPTY_ID)
-        //{
-        //    // 離された場所が空白でなかったら終了
-        //    ResetSelect();
-        //    return;
-        //}
-
         List<int> surroundAreaList = GetSurroundAreaList(_selectArrayIndex);
         int emptyIndex = Defs.INVALID_ID;
         foreach (var surroundIndex in surroundAreaList)
@@ -220,8 +207,7 @@ public class PieceManager : MonoBehaviour
         _selectArrayIndex = Defs.INVALID_ID; // 選択解除
         if (IsClear())
         {
-            // TODO：次のステップへ進む処理をここに書く
-            Debug.Log("Clear!");
+            SceneManager.LoadScene("ClearScene"); // シーン遷移
         }
         return;
     }
