@@ -674,7 +674,6 @@ GameObject:
   - component: {fileID: 1401745961}
   - component: {fileID: 1401745963}
   - component: {fileID: 1401745962}
-  - component: {fileID: 1401745964}
   m_Layer: 5
   m_Name: gauge_full
   m_TagString: Untagged
@@ -722,13 +721,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 1592157920401309735, guid: b2b0da309e55fec44b7f9091d22ac4ed, type: 3}
-  m_Type: 3
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 2
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1401745963
@@ -739,18 +738,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401745960}
   m_CullTransparentMesh: 1
---- !u!114 &1401745964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1401745960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a1c3333c4defa40ae4eb6edf642a5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gauge
 --- !u!1 &1409890287
 GameObject:
   m_ObjectHideFlags: 0

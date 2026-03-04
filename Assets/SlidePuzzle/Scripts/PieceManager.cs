@@ -94,7 +94,7 @@ public class PieceManager : MonoBehaviour
             _pieces[i].Initialize(i, img);
         }
         // クリア確認用
-        // SwapPiece(0, 1);
+        //SwapPiece(0, 1);
         do
         {
             // ピースをシャッフル(0番目、左上は入れ替えない)
@@ -203,6 +203,7 @@ public class PieceManager : MonoBehaviour
 
         // 選択されていたピースと離された場所のピースを入れ替え
         SwapPiece(_selectArrayIndex, emptyIndex);
+        GameObject.Find("gauge_full").GetComponent<Gauge>().DecreaseHp();
 
         _selectArrayIndex = Defs.INVALID_ID; // 選択解除
         if (IsClear())

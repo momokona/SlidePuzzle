@@ -674,7 +674,6 @@ GameObject:
   - component: {fileID: 1401745961}
   - component: {fileID: 1401745963}
   - component: {fileID: 1401745962}
-  - component: {fileID: 1401745964}
   m_Layer: 5
   m_Name: gauge_full
   m_TagString: Untagged
@@ -696,10 +695,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1371220875}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -850, y: 450}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 120, y: -120}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1401745962
 MonoBehaviour:
@@ -739,18 +738,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401745960}
   m_CullTransparentMesh: 1
---- !u!114 &1401745964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1401745960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a1c3333c4defa40ae4eb6edf642a5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gauge
 --- !u!1 &1409890287
 GameObject:
   m_ObjectHideFlags: 0
