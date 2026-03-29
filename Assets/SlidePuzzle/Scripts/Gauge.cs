@@ -22,7 +22,7 @@ public class Gauge : MonoBehaviour
         GetComponent<Image>().fillAmount -= 0.1f;
         if(GetComponent<Image>().fillAmount <= 0)
         {
-            SceneManager.LoadScene("GameOver");
+            SceneManager.LoadScene("GameOverScene");
         }
     }
 }
