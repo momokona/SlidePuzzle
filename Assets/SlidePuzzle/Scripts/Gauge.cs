@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Gauge : MonoBehaviour
@@ -19,5 +20,9 @@ public class Gauge : MonoBehaviour
     public void DecreaseHp()
     {
         GetComponent<Image>().fillAmount -= 0.1f;
+        if(GetComponent<Image>().fillAmount <= 0)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
     }
 }
