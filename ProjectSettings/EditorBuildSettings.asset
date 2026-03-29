@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SlidePuzzle/Scenes/GameOverScene.unity
     guid: dc377007cca6bd4468f4ac505bdb33db
+  - enabled: 1
+    path: Assets/SlidePuzzle/Scenes/TitleScene.unity
+    guid: 1b85e17108b416c49a4f68ec8dd333d1
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
