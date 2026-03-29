@@ -240,12 +240,12 @@ public class PieceManager : MonoBehaviour
             return;
         }
         int arrayIndex = GetArrayIndexFromPos(hitPos.row, hitPos.col);
-        if(arrayIndex == Defs.INVALID_ID || _pieces[arrayIndex].GetId() == Defs.EMPTY_ID)
+        if (arrayIndex == Defs.INVALID_ID || _pieces[arrayIndex].GetId() == Defs.EMPTY_ID)
         {
             // 無効なインデックス、または空白のピースが選択された場合は終了
             return;
         }
-        
+
         // 動けるマスがあるか探す
         List<int> surroundAreaList = GetSurroundAreaList(arrayIndex);
         foreach (var piece in surroundAreaList)
@@ -344,6 +344,29 @@ public class PieceManager : MonoBehaviour
             }
             ++right_index;
         }
-            return true;
+        return true;
+    }
+
+    public void DebugClear()
+    {
+        int totalCellNum = GetTotalCellNum();
+        for (int cellIndex = 0; cellIndex < totalCellNum; ++cellIndex)
+        {
+            if (_pieces[cellIndex].GetId() == cellIndex)
+            {
+                continue;   // すでに正しい位置にある場合はスキップ
+            }
+            for(int swapIndex = cellIndex; swapIndex < totalCellNum; ++swapIndex)
+            {
+                if (_pieces[swapIndex].GetId() == cellIndex)
+                {
+                    SwapPiece(cellIndex, swapIndex);
+                    break;
+                }
+            }
+        }
+        // ここまでですべてのピースが正しい位置に来るはず
+        // 一個ずらす
+        SwapPiece(0, 1);
     }
 }
